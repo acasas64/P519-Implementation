@@ -28,6 +28,7 @@ jobs:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+          
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v3
@@ -35,12 +36,26 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
+          
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.2.0
+
+      - name: Restore NuGet packages
+        run: nuget restore P519.sln
+          
+      - name: Setup-MSBuild
+        uses: microsoft/setup-msbuild@v1.3.1
+          
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -48,20 +63,8 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"acasas64_P519-Implementation" /o:"acasas64" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          <insert_your_clean_build_command>
+          msbuild P519.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-          
-      - name: Setup-MSBuild
-        uses: microsoft/setup-msbuild@v1.3.1
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.2.0
-
-      - name: Restore NuGet packages
-        run: nuget restore P519.sln
-
-      - name: Build project
-        run: msbuild P519.sln
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.0.0
