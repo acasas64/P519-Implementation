@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P519-Import", "P519-Import\P519-Import.csproj", "{6F8F0D24-4005-4A73-AB6D-A78954906A42}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P519-Import", "P519-Import\P519-Import.csproj", "{A9C763F3-386F-46CF-A477-4DEC3C928D8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P519-Import-Test", "P519-Import-Test\P519-Import-Test.csproj", "{D0509932-24A6-4AE6-93A7-D446188B9B4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6F8F0D24-4005-4A73-AB6D-A78954906A42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F8F0D24-4005-4A73-AB6D-A78954906A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F8F0D24-4005-4A73-AB6D-A78954906A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F8F0D24-4005-4A73-AB6D-A78954906A42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9C763F3-386F-46CF-A477-4DEC3C928D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9C763F3-386F-46CF-A477-4DEC3C928D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9C763F3-386F-46CF-A477-4DEC3C928D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9C763F3-386F-46CF-A477-4DEC3C928D8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0509932-24A6-4AE6-93A7-D446188B9B4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0509932-24A6-4AE6-93A7-D446188B9B4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0509932-24A6-4AE6-93A7-D446188B9B4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0509932-24A6-4AE6-93A7-D446188B9B4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
