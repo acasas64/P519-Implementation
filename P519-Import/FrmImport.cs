@@ -32,6 +32,7 @@ namespace P519_Import {
          }
       }
 
+
       private static string pideArchivo(IWin32Window owner, string strWitch) {
          OpenFileDialog ofd = new OpenFileDialog();
          ofd.Title = strWitch;
@@ -61,16 +62,21 @@ namespace P519_Import {
       }
 
       private static bool traeArchivo(IWin32Window owner, DataGridView dgv, string strWitch) {
-         dgv.DataSource = null;
-         string strFileName = pideArchivo(owner, strWitch);
-         if (strFileName == "") return false;
+         try {
+            dgv.DataSource = null;
+            string strFileName = pideArchivo(owner, strWitch);
+            if (strFileName == "") return false;
 
-         DataTable dt = leeArchivo(strFileName);
-         if (dt == null) return false;
+            DataTable dt = leeArchivo(strFileName);
+            if (dt == null) return false;
 
-         dgv.DataSource = dt;
+            dgv.DataSource = dt;
+            return true;
 
-         return true;
+         } catch (Exception) {
+
+            return false;
+         }
       }
 
       private static void validaMasterSN() {
