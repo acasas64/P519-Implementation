@@ -1,5 +1,7 @@
 namespace P519_Import_Test {
-   public class UnitTest1 {
+
+   public class FrmImportTests {
+
       [Fact]
       public void Test1() {
 

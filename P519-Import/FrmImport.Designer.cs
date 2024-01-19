@@ -100,6 +100,7 @@
          MainMenuStrip = menuStrip1;
          Name = "FrmImport";
          Text = "Serials Import From Excel";
+         FormClosed += FrmImport_FormClosed;
          ((System.ComponentModel.ISupportInitialize)dgvImport).EndInit();
          menuStrip1.ResumeLayout(false);
          menuStrip1.PerformLayout();
