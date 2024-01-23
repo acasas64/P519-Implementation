@@ -1,5 +1,7 @@
 using System.Data;
 using System.Data.OleDb;
+using System.Net.Security;
+using System.Resources.Tools;
 using DataBase;
 using ExcelDataReader;
 
@@ -24,12 +26,19 @@ namespace P519_Import {
 
       private void importMasterSNToolStripMenuItem_Click(object sender, EventArgs e) {
          this.Text = strTitle;
+         dgvImport.DataSource = null;
          DataTable? dt = TraeArchivo(this, "Process MASTER Serial Number");
          if (dt != null) {
-            ValidaMasterSN(ref dt);
+            dgvImport.DataSource = dt;
+            if (!ValidaMasterSN(ref dt)) {
+               dgvImport.DataSource = dt;
+               //               ColorErrorsDgv(ref dgvImport);
+            } else {
+               dgvImport.DataSource = dt;
+               SaveMasterSN(dt);
+            }
             this.Text += " (MASTER) ";
          }
-         dgvImport.DataSource = dt;
       }
 
       private void importToteSNToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -218,5 +227,47 @@ namespace P519_Import {
          return 0;   // Sp OK
       }
 
+      private void ColorErrorsDgv(object sender, DataGridViewCellFormattingEventArgs e) {
+         DataGridView dgv = (DataGridView)sender;
+         if (!dgv.Columns.Contains("Validate")) return;
+         foreach (DataGridViewRow r in dgv.Rows) {
+            string strRes = r.Cells["Validate"].Value.ToString()!;
+            string[] arrRes = strRes.Split(',');
+            if (arrRes.Length < 4) return;
+            if (!strRes.Equals("0,0,0,0")) {
+               if (arrRes[0] != "0") r.Cells["PalletId"].Style.BackColor = Color.Red;
+               if (arrRes[1] != "0") r.Cells["Grammer No 1"].Style.BackColor = Color.Red;
+               if (arrRes[2] != "0") r.Cells["Grammer No 2"].Style.BackColor = Color.Red;
+               if (arrRes[3] != "0") r.Cells["Quantity"].Style.BackColor = Color.Red;
+            }
+         }
+         dgv.Refresh();
+      }
+
+      private bool SaveMasterSN(DataTable dt) {
+         try {
+            ClsTable tblPallet = new ClsTable(ref cn, "Pallet");
+            foreach (DataRow dtr in dt.Rows) {
+               tblPallet["PalletId"] = dtr["PalletId"];
+               tblPallet["GrammerNo1"] = dtr["Grammer No 1"];
+               tblPallet["GrammerNo2"] = dtr["Grammer No 2"];
+               tblPallet["Quantity"] = dtr["Quantity"];
+               tblPallet.Insertar();
+            }
+            return true;
+         } catch (OleDbException e) {
+            Logger.Error(e, "Error could not open table Pallet");
+            MessageBox.Show(this, $"Error could not open table\n{e.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+         } catch (Exception e) {
+            Logger.Error(e, "Error could not open table Pallet");
+            MessageBox.Show(this, $"Error could not open table\n{e.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+         }
+         return false;
+      }
+
+      private void SaveMasterSN(object sender, DataGridViewRowsAddedEventArgs e) {
+
+      }
    }
+
 }

@@ -46,6 +46,7 @@
          dgvImport.ReadOnly = true;
          dgvImport.Size = new Size(872, 500);
          dgvImport.TabIndex = 0;
+         dgvImport.RowsAdded += SaveMasterSN;
          // 
          // menuStrip1
          // 
