@@ -30,8 +30,15 @@
          importToteSNToolStripMenuItem = new ToolStripMenuItem();
          toolStripSeparator1 = new ToolStripSeparator();
          closeToolStripMenuItem = new ToolStripMenuItem();
+         statusStrip1 = new StatusStrip();
+         tsslTotalRows = new ToolStripStatusLabel();
+         tsslRowsOk = new ToolStripStatusLabel();
+         tsslErrors = new ToolStripStatusLabel();
+         tsslDummy = new ToolStripStatusLabel();
+         tspbProgress = new ToolStripProgressBar();
          ((System.ComponentModel.ISupportInitialize)dgvImport).BeginInit();
          menuStrip1.SuspendLayout();
+         statusStrip1.SuspendLayout();
          SuspendLayout();
          // 
          // dgvImport
@@ -46,7 +53,7 @@
          dgvImport.ReadOnly = true;
          dgvImport.Size = new Size(872, 500);
          dgvImport.TabIndex = 0;
-         dgvImport.RowsAdded += SaveMasterSN;
+         dgvImport.CellFormatting += dgvImport_CellFormatting;
          // 
          // menuStrip1
          // 
@@ -91,11 +98,51 @@
          closeToolStripMenuItem.Text = "Close";
          closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
          // 
+         // statusStrip1
+         // 
+         statusStrip1.Items.AddRange(new ToolStripItem[] { tsslTotalRows, tsslRowsOk, tsslErrors, tsslDummy, tspbProgress });
+         statusStrip1.Location = new Point(0, 507);
+         statusStrip1.Name = "statusStrip1";
+         statusStrip1.Size = new Size(872, 22);
+         statusStrip1.TabIndex = 2;
+         statusStrip1.Text = "statusStrip1";
+         // 
+         // tsslTotalRows
+         // 
+         tsslTotalRows.Name = "tsslTotalRows";
+         tsslTotalRows.Size = new Size(117, 17);
+         tsslTotalRows.Text = "Total Rows Readed: 0";
+         // 
+         // tsslRowsOk
+         // 
+         tsslRowsOk.Name = "tsslRowsOk";
+         tsslRowsOk.Size = new Size(66, 17);
+         tsslRowsOk.Text = "Rows OK: 0";
+         // 
+         // tsslErrors
+         // 
+         tsslErrors.Name = "tsslErrors";
+         tsslErrors.Size = new Size(49, 17);
+         tsslErrors.Text = "Errors: 0";
+         // 
+         // tsslDummy
+         // 
+         tsslDummy.Name = "tsslDummy";
+         tsslDummy.Size = new Size(423, 17);
+         tsslDummy.Spring = true;
+         // 
+         // tspbProgress
+         // 
+         tspbProgress.Alignment = ToolStripItemAlignment.Right;
+         tspbProgress.Name = "tspbProgress";
+         tspbProgress.Size = new Size(200, 16);
+         // 
          // FrmImport
          // 
          AutoScaleDimensions = new SizeF(7F, 15F);
          AutoScaleMode = AutoScaleMode.Font;
          ClientSize = new Size(872, 529);
+         Controls.Add(statusStrip1);
          Controls.Add(dgvImport);
          Controls.Add(menuStrip1);
          MainMenuStrip = menuStrip1;
@@ -105,6 +152,8 @@
          ((System.ComponentModel.ISupportInitialize)dgvImport).EndInit();
          menuStrip1.ResumeLayout(false);
          menuStrip1.PerformLayout();
+         statusStrip1.ResumeLayout(false);
+         statusStrip1.PerformLayout();
          ResumeLayout(false);
          PerformLayout();
       }
@@ -118,5 +167,11 @@
       private ToolStripMenuItem importToteSNToolStripMenuItem;
       private ToolStripSeparator toolStripSeparator1;
       private ToolStripMenuItem closeToolStripMenuItem;
+      private StatusStrip statusStrip1;
+      private ToolStripStatusLabel tsslTotalRows;
+      private ToolStripStatusLabel tsslRowsOk;
+      private ToolStripStatusLabel tsslErrors;
+      private ToolStripProgressBar tspbProgress;
+      private ToolStripStatusLabel tsslDummy;
    }
 }

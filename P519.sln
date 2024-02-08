@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBase", "..\..\..\DataBa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PLC", "PLC\PLC.csproj", "{46206E26-7182-4F9C-A375-2B8CC849758D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P519-G2798", "P519-G2798\P519-G2798.csproj", "{C74FAC5A-EBAA-42EA-97C7-ABBEE05C6A10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{46206E26-7182-4F9C-A375-2B8CC849758D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46206E26-7182-4F9C-A375-2B8CC849758D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46206E26-7182-4F9C-A375-2B8CC849758D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C74FAC5A-EBAA-42EA-97C7-ABBEE05C6A10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C74FAC5A-EBAA-42EA-97C7-ABBEE05C6A10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C74FAC5A-EBAA-42EA-97C7-ABBEE05C6A10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C74FAC5A-EBAA-42EA-97C7-ABBEE05C6A10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

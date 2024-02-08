@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Net.Security;
@@ -9,6 +10,9 @@ namespace P519_Import {
    public partial class FrmImport : Form {
 
       private static string strSeccion = "P519";
+      private int intTotalRows = 0;
+      private int intOkRows = 0;
+      private int intErrorRows = 0;
 
       private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
       private readonly string strTitle = "Process Serial Numbers From Excel File";
@@ -26,6 +30,12 @@ namespace P519_Import {
 
       private void importMasterSNToolStripMenuItem_Click(object sender, EventArgs e) {
          this.Text = strTitle;
+         intTotalRows = 0;
+         intOkRows = 0;
+         intErrorRows = 0;
+         tspbProgress.Maximum = 0;
+         tspbProgress.Value = 0;
+         muestraContadores();
          dgvImport.DataSource = null;
          DataTable? dt = TraeArchivo(this, "Process MASTER Serial Number");
          if (dt != null) {
@@ -39,6 +49,7 @@ namespace P519_Import {
             }
             this.Text += " (MASTER) ";
          }
+         muestraContadores();
       }
 
       private void importToteSNToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -52,6 +63,12 @@ namespace P519_Import {
 
       private void closeToolStripMenuItem_Click(object sender, EventArgs e) {
          this.Close();
+      }
+
+      private void muestraContadores() {
+         tsslTotalRows.Text = $"Total Rows Readed: {intTotalRows}";
+         tsslRowsOk.Text = $"Rows OK: {intOkRows}";
+         tsslErrors.Text = $"Errors: {intErrorRows}";
       }
 
 
@@ -104,39 +121,40 @@ namespace P519_Import {
          ClsTable? tblPallet = null;
          ClsPart? tblPart = null;
 
+         tspbProgress.Maximum = dt.Rows.Count;
+
          if (!ValidaColumnasMasterSN(ref dt)) return false;
          if (!ValidaTablasPallet(ref tblPart, ref tblPallet)) return false;
 
-         bool boolRes = true;
          long lngPrevSN = -1;
          long lngSP1 = 0; ;
          long lngSP2 = 0; ;
-         string strTmp = "";
-
          foreach (DataRow r in dt.Rows) {
             Logger.Info($"Serial {r["PalletId"]}, Grammer No. 1 {r["Grammer No 1"].ToString()}, Grammer No. 2 {r["Grammer No 2"].ToString()}, Quantity {r["Quantity"]}");
-
+            int intErrorsTmp = intErrorRows;
             // Valida Numero Serial
-            strTmp = ValidaMasterSN(r["PalletId"].ToString(), tblPallet!, ref lngPrevSN).ToString();
-            if (strTmp != "0") boolRes = false;
+            string strTmp = ValidaMasterSN(r["PalletId"].ToString(), tblPallet!, ref lngPrevSN).ToString();
+            if (strTmp != "0") intErrorRows++;
             r["Validate"] = strTmp;
 
             // Valida Numero Grammer1
             strTmp = ValidaGrammerNo(r["Grammer No 1"].ToString(), tblPart!, ref lngSP1).ToString();
-            if (strTmp != "0") boolRes = false;
+            if (strTmp != "0") intErrorRows++;
             r["Validate"] += $",{strTmp}";
 
             // Valida Numero Grammer2
             strTmp = ValidaGrammerNo(r["Grammer No 2"].ToString(), tblPart!, ref lngSP2).ToString();
-            if (strTmp != "0") boolRes = false;
+            if (strTmp != "0") intErrorRows++;
             r["Validate"] += $",{strTmp}";
 
             // Valida cantidad numerico
             strTmp = ValidaCantidad(r["Quantity"].ToString(), lngSP1, lngSP2).ToString();
-            if (strTmp != "0") boolRes = false;
+            if (strTmp != "0") intErrorRows++;
             r["Validate"] += $",{strTmp}";
+            if (intErrorsTmp == intErrorRows) intOkRows++;
+            tspbProgress.Value =  ++intTotalRows;
          }
-         return boolRes;
+         return intErrorRows <= 0;
       }
 
       private static void ValidaToteSN() {
@@ -265,7 +283,23 @@ namespace P519_Import {
          return false;
       }
 
-      private void SaveMasterSN(object sender, DataGridViewRowsAddedEventArgs e) {
+      private void dgvImport_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
+
+         DataGridView dgv = (DataGridView)sender;
+         if (!dgv.Columns.Contains("Validate")) return;
+         string strColumn = dgv.Columns[e.ColumnIndex].Name;
+
+         DataGridViewRow r = dgv.Rows[e.RowIndex];
+
+         string strRes = dgv.Rows[e.RowIndex].Cells["Validate"].Value.ToString()!;
+         string[] arrRes = strRes.Split(',');
+         if (arrRes.Length < 4) return;
+         if (!strRes.Equals("0,0,0,0")) {
+            if (arrRes[0] != "0" && strColumn == "PalletId") r.Cells["PalletId"].Style.BackColor = Color.Red;
+            if (arrRes[1] != "0" && strColumn == "Grammer No 1") r.Cells["Grammer No 1"].Style.BackColor = Color.Red;
+            if (arrRes[2] != "0" && strColumn == "Grammer No 2") r.Cells["Grammer No 2"].Style.BackColor = Color.Red;
+            if (arrRes[3] != "0" && strColumn == "Quantity") r.Cells["Quantity"].Style.BackColor = Color.Red;
+         }
 
       }
    }
