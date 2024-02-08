@@ -22,6 +22,7 @@ namespace PLC {
          CheckForIllegalCrossThreadCalls = false;
          sp = spPLC;
          llenaCom(tsddbCom, spPLC.PortName);
+         MuestraConfig();
       }
 
       private void FrmPLC_Load(object sender, EventArgs e) {
@@ -44,7 +45,7 @@ namespace PLC {
       private void MuestraConfig() {
          tsddbCom.Text = "COM?";
          if (sp == null) return;
-         if (sp.IsOpen) tsddbCom.Text = sp.PortName;
+         tsddbCom.Text = sp.PortName;
          tsslParametros.Text = "";
          tsslParametros.Text = tsslParametros.Text + " Dato:";
          tsslParametros.Text = tsslParametros.Text + sp.DataBits.ToString();
@@ -56,6 +57,7 @@ namespace PLC {
          tsslParametros.Text = tsslParametros.Text + sp.Handshake.ToString();
          tsslParametros.Text = tsslParametros.Text + " Velocidad:";
          tsslParametros.Text = tsslParametros.Text + sp.BaudRate.ToString();
+         tsddbCom.BackColor = (sp.IsOpen ? Color.LightGreen : Color.Red);
       }
 
       private void llenaCom(ToolStripDropDownButton tsddb, string strCom) {

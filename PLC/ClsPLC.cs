@@ -9,20 +9,22 @@ using System.Threading.Tasks;
 namespace PLC {
    public class ClsPLC {
 
+      public delegate void ReceiveCompletedCallBack(string strDatos);
+
       FrmPLC? fPLC = null;
       SerialPort? spPLC = null;
+      ReceiveCompletedCallBack _callback;
 
-      public ClsPLC(string strCom, int intVelocidad = 9600) {
-         try {
-            ComConectar(strCom, intVelocidad);
-         } catch (Exception) {
-            throw;
-         }
+      public ClsPLC(ReceiveCompletedCallBack CallBack, string strCom, int intVelocidad = 9600) {
+         ComConectar(strCom, intVelocidad);
+         _callback = CallBack;
       }
 
-      public void ComConectar(string strCom, int intVelocidad = 9600) {
-         if (spPLC == null)
+      public bool ComConectar(string strCom, int intVelocidad = 9600) {
+         if (spPLC == null) {
             spPLC = new SerialPort();
+            spPLC.DataReceived += new SerialDataReceivedEventHandler(DataRecive);
+         }
          if (spPLC.IsOpen) spPLC.Close();
          spPLC.PortName = strCom;
          spPLC.BaudRate = intVelocidad;
@@ -34,25 +36,28 @@ namespace PLC {
          spPLC.RtsEnable = true;    // Request-to-send
          try {
             spPLC.Open();
-            spPLC.DataReceived += new SerialDataReceivedEventHandler(DataRecive);
          } catch (Exception) {
-            throw;
+            return false;
          }
+         return true;
       }
 
-      private static void DataRecive(object sender, SerialDataReceivedEventArgs e) {
+      private static bool ocupado = false;
+      private void DataRecive(object sender, SerialDataReceivedEventArgs e) {
          SerialPort sp = (SerialPort)sender;
-         string message = sp.ReadLine();
-      }
 
-      private bool ocupado = false;
-      public string RecibeDato() {
          while (ocupado) ;
          ocupado = true;
-         string datos = spPLC!.ReadExisting();
-         if (fPLC != null) fPLC.Muestra = "Recep: " + datos;
+         string datos = "";
+
+         while (sp.BytesToRead>0) {
+            datos += sp.ReadExisting();
+            Thread.Sleep(1);
+         }
+         if (fPLC != null) fPLC.Muestra = "Input: " + datos;
          ocupado = false;
-         return datos;
+         // Manda datos a una funcion call back
+         _callback(datos);
       }
 
       public bool EnviaDato(string strMsg) {
@@ -102,5 +107,25 @@ namespace PLC {
          }
       }
 
+      public bool IsOpen {
+         get {
+            if (spPLC == null) return false;
+            return spPLC.IsOpen;
+         }
+      }
+
+      public bool IsClose {
+         get {
+            if (spPLC == null) return false;
+            return !spPLC.IsOpen;
+         }
+      }
+
+      public string PortName {
+         get {
+            if (spPLC == null) return "Com?";
+            return spPLC.PortName;
+         }
+      }
    }
 }
